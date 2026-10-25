@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
+import { ProjectStatus } from '../../types';
 
 interface MigrationData {
   projects: unknown[];
@@ -12,14 +13,14 @@ interface MigrationWizardProps {
   onDone: () => void;
 }
 
-function mapStatus(old: string): string {
-  const map: Record<string, string> = {
+function mapStatus(old: string): ProjectStatus {
+  const map: Record<string, ProjectStatus> = {
     live: 'active',
     build: 'in_development',
     idea: 'planned',
     pause: 'paused',
   };
-  return map[old] || old;
+  return map[old] || 'planned';
 }
 
 const LS_KEY = 'migrationDone';
@@ -108,7 +109,7 @@ export function MigrationWizard({ onDone }: MigrationWizardProps) {
 
       // Import analyzer topics (prototype sessions: array of { id, t: string, b: [{ id, k: string, s: string }] })
       for (const s of data.sessions as Array<{ t?: string; b?: Array<{ k: string; s: string }> }>) {
-        const topic = await api.analyzer.createTopic({ title: s.t || 'Untitled topic' }) as { id: string };
+        const topic = (await api.analyzer.createTopic({ title: s.t || 'Untitled topic' })) as { id: string };
         if (s.b && Array.isArray(s.b)) {
           for (let i = 0; i < s.b.length; i++) {
             const blk = s.b[i];
@@ -169,13 +170,13 @@ export function MigrationWizard({ onDone }: MigrationWizardProps) {
             <span className="migration-stat-label">Work sessions</span>
             <span className="migration-stat-val">{(data.sessions as unknown[]).length}</span>
           </div>
-          {error && (
-            <div className="auth-error" style={{ marginTop: 12 }}>{error}</div>
-          )}
+          {error && <div className="auth-error" style={{ marginTop: 12 }}>{error}</div>}
         </div>
 
         <div className="migration-actions">
-          <button className="migration-btn" onClick={handleSkip} disabled={importing}>Skip</button>
+          <button className="migration-btn" onClick={handleSkip} disabled={importing}>
+            Skip
+          </button>
           <button className="migration-btn primary" onClick={handleImport} disabled={importing}>
             {importing ? 'Importing…' : 'Import data'}
           </button>

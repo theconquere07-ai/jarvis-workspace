@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 
+export type WorkspaceTab = 'board' | 'projects' | 'analyzer' | 'growth' | 'showcase' | 'storage' | 'avis';
+
 interface HeaderProps {
-  activeTab: 'board' | 'projects' | 'analyzer';
-  onTabChange: (tab: 'board' | 'projects' | 'analyzer') => void;
+  activeTab: WorkspaceTab;
+  onTabChange: (tab: WorkspaceTab) => void;
   onIntro: () => void;
   onTimer: () => void;
   timerRunning: boolean;
@@ -10,6 +12,7 @@ interface HeaderProps {
   theme: 'dark' | 'light';
   onThemeToggle: () => void;
   onSignOut: () => void;
+  onOpenPublicShowcase: () => void;
 }
 
 export function Header({
@@ -22,6 +25,7 @@ export function Header({
   theme,
   onThemeToggle,
   onSignOut,
+  onOpenPublicShowcase,
 }: HeaderProps) {
   const [clock, setClock] = useState('');
 
@@ -36,11 +40,11 @@ export function Header({
 
   return (
     <header>
-      <div className="brand">
-        Workspace<i> / yours</i>
+      <div className="brand" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+        <span>Workspace<i> / yours</i></span>
       </div>
 
-      <nav id="nav">
+      <nav id="nav" style={{ overflowX: 'auto', maxWidth: '100%' }}>
         <button
           className={activeTab === 'board' ? 'on' : ''}
           onClick={() => onTabChange('board')}
@@ -59,9 +63,42 @@ export function Header({
         >
           Analyzer
         </button>
+        <button
+          className={activeTab === 'growth' ? 'on' : ''}
+          onClick={() => onTabChange('growth')}
+        >
+          Growth
+        </button>
+        <button
+          className={activeTab === 'showcase' ? 'on' : ''}
+          onClick={() => onTabChange('showcase')}
+        >
+          Showcase CMS
+        </button>
+        <button
+          className={activeTab === 'storage' ? 'on' : ''}
+          onClick={() => onTabChange('storage')}
+        >
+          Storage
+        </button>
+        <button
+          className={activeTab === 'avis' ? 'on' : ''}
+          onClick={() => onTabChange('avis')}
+          style={{ color: activeTab === 'avis' ? '#000' : 'var(--gold)' }}
+        >
+          A.V.I.S.
+        </button>
       </nav>
 
       <div className="meta">
+        <button
+          onClick={onOpenPublicShowcase}
+          className="tg"
+          style={{ color: 'var(--tx)', border: '1px solid var(--ln2)', marginRight: '6px' }}
+          title="Open Public Showcase"
+        >
+          Public Showcase ↗
+        </button>
         <span className="pulse" />
         <span id="clock">{clock}</span>
         <button
