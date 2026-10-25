@@ -52,7 +52,9 @@ export function Timer({ onClose, projects = [] }: TimerProps) {
   // Click outside and escape handling
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('#tm') || target?.closest('.tm')) return;
+      if (popupRef.current && !popupRef.current.contains(target as Node)) {
         onClose();
       }
     };
